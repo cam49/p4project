@@ -1,1 +1,8 @@
+Runtime
 simple_switch -i 0@s1-eth0 -i 1@s1-eth1 -i 2@s1-eth2 --nanolog ipc:///tmp/bm-log.ipc basic.json &
+
+VM Preparation
+arp -s 10.0.0.1 00:00:00:00:00:01
+
+hping3
+hping3 -S 10.0.0.1 -c 1

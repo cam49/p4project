@@ -1,8 +1,29 @@
 Runtime
+---------
 simple_switch -i 0@s1-eth0 -i 1@s1-eth1 -i 2@s1-eth2 --nanolog ipc:///tmp/bm-log.ipc basic.json &
 
-VM Preparation
+nanomsg_client.py
+
+VM Preparation | Needed for pinging
+----------------------------------
 arp -s 10.0.0.1 00:00:00:00:00:01
 
 hping3
+------
+#send a syn flag once
 hping3 -S 10.0.0.1 -c 1
+#send a udp packet once
+hping3 -2 10.0.0.1 -c 1
+
+various rules
+-------------
+drop icmp packets
+table_add MyIngress.filter_ipv4_protocol drop 0x01 =>
+drop udp packets
+table_add MyIngress.filter_ipv4_protocol drop 0x11 =>
+drop tcp packets
+table_add MyIngress.filter_ipv4_protocol drop 0x06 =>
+block ip address
+table_add MyIngress.filter_src drop 10.0.0.1 =>
+block syn flags
+table_add MyIngress.filter_tcp_flags drop 0x02 =>

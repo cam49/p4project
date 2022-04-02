@@ -5,19 +5,18 @@
 const bit<16> TYPE_IPV4 = 0x800;
 const bit<8> TYPE_TCP = 0x06;
 const bit<8> TYPE_UDP = 0x11;
-const bit<8> TYPE_OSPF = 0x59;
+/*const bit<8> TYPE_OSPF = 0x59;*/
 const bit<8> TYPE_ICMP = 0x01;
 
 /*** TCP Flags ***/
-const bit<9> FLAG_NS = 0x100;
-const bit<9> FLAG_CWR = 0x080;
-const bit<9> FLAG_ECE = 0x040;
-const bit<9> FLAG_URG = 0x020;
-const bit<9> FLAG_ACK = 0x010;
-const bit<9> FLAG_PSH = 0x008;
-const bit<9> FLAG_RST = 0x004;
-const bit<9> FLAG_SYN = 0x002;
-const bit<9> FLAG_FIN = 0x001;
+const bit<8> FLAG_CWR = 0x80;
+const bit<8> FLAG_ECE = 0x40;
+const bit<8> FLAG_URG = 0x20;
+const bit<8> FLAG_ACK = 0x10;
+const bit<8> FLAG_PSH = 0x08;
+const bit<8> FLAG_RST = 0x04;
+const bit<8> FLAG_SYN = 0x02;
+const bit<8> FLAG_FIN = 0x01;
 
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
@@ -54,12 +53,11 @@ header tcp_t {
     bit<32> seqNum;
     bit<32> ackNum;
     bit<4>  headerSize;
-    bit<3>  reserve;
-    bit<9>  flags;
+    bit<4>  reserve;
+    bit<8>  flags;
     bit<16> windowSize;
     bit<16> chksum;
     bit<16> urg;
-    bit<32> options;
 }
 
 header udp_t {
@@ -69,7 +67,7 @@ header udp_t {
     bit<16> chksum;
 }
 
-header ospf_t {
+/*header ospf_t {
     bit<8>   version;
     bit<8>  ospfType;
     bit<16>  packLen;
@@ -79,7 +77,7 @@ header ospf_t {
     bit<16> authType;
     bit<32>  authOne;
     bit<32>  authTwo;
-}
+}*/
 
 header icmp_t {
     bit<8> type;
@@ -96,7 +94,7 @@ struct headers {
     ipv4_t       ipv4;
     tcp_t        tcp;
     udp_t        udp;
-    ospf_t       ospf;
+    /*ospf_t       ospf;*/
     icmp_t       icmp;
 }
 
@@ -126,7 +124,7 @@ parser MyParser(packet_in packet,
         transition select(hdr.ipv4.protocol) {
             TYPE_TCP: parse_tcp;
             TYPE_UDP: parse_udp;
-            TYPE_OSPF: parse_ospf;
+            /*TYPE_OSPF: parse_ospf;*/
             TYPE_ICMP: parse_icmp;
             default: accept;
         }
@@ -142,10 +140,10 @@ parser MyParser(packet_in packet,
         transition accept;
     }
 
-    state parse_ospf {
+    /*state parse_ospf {
         packet.extract(hdr.ospf);
         transition accept;
-    }
+    }*/
 
     state parse_icmp {
         packet.extract(hdr.icmp);
@@ -224,8 +222,8 @@ control MyIngress(inout headers hdr,
         if(hdr.ipv4.isValid()){
             forwarding.apply();
             filter_src.apply();
-            filter_protocol.apply();
-            filter_flags.apply();
+            filter_ipv4_protocol.apply();
+            filter_tcp_flags.apply();
         }
     }
 }
@@ -275,7 +273,7 @@ control MyDeparser(packet_out packet, in headers hdr) {
         packet.emit(hdr.ipv4);
         packet.emit(hdr.tcp);
         packet.emit(hdr.udp);
-        packet.emit(hdr.ospf);
+        /*packet.emit(hdr.ospf);*/
         packet.emit(hdr.icmp);
     }
 }

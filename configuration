@@ -1,0 +1,2 @@
+#!/bin/bash
+simple_switch -i 0@s1-eth0 -i 1@s1-eth1 -i 2@s1-eth2 --nanolog ipc:///tmp/bm-log.ipc basic.json &

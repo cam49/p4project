@@ -1,0 +1,8 @@
+#!/bin/bash
+push_to_switch basic.json s1
+push_to_switch dropUDP.cmd s1
+push_to_switch dropTCP.cmd s1
+push_to_switch dropSRC.cmd s1
+push_to_switch dropICMP.cmd s1
+push_to_switch dropSYN.cmd s1
+push_to_switch configuration s1

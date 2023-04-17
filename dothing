@@ -1,5 +1,6 @@
 #!/bin/bash
 push_to_switch basic.json s1
+push_to_switch cli.sh s1
 push_to_switch dropUDP.cmd s1
 push_to_switch dropTCP.cmd s1
 push_to_switch dropSRC.cmd s1
